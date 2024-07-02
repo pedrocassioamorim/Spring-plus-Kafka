@@ -1,17 +1,19 @@
-package net.test.springpluskafka.dtos;
+package net.test.springpluskafka.domain.dtos;
 
-import lombok.Value;
-import net.test.springpluskafka.entities.Order;
+import lombok.Data;
+import net.test.springpluskafka.domain.entities.Order;
 
 import java.io.Serializable;
 
 /**
  * DTO for {@link Order}
  */
-@Value
+@Data
 public class OrderDto implements Serializable {
     Long id;
     String name;
     Integer quantity;
     Double price;
+
+
 }

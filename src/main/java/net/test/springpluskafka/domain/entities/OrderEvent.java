@@ -1,4 +1,5 @@
-package net.test.springpluskafka.entities;
+package net.test.springpluskafka.domain.entities;
+
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,9 +13,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
-@Table(name = "StorageOrder")
-public class Order implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class OrderEvent implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,12 +25,13 @@ public class Order implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    private String name;
+    private String message;
 
-    private Integer quantity;
+    private String status;
 
-    private Double price;
-
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @Override
     public final boolean equals(Object o) {
@@ -38,8 +40,8 @@ public class Order implements Serializable {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Order order = (Order) o;
-        return getId() != null && Objects.equals(getId(), order.getId());
+        OrderEvent that = (OrderEvent) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override
