@@ -38,15 +38,12 @@ public class OrderService {
     }
 
     @Transactional
-    public PagedModel<OrderDto> findAllPaged(PageRequest pageRequest){
+    public Page<OrderDto> findAllPaged(PageRequest pageRequest){
+        ModelMapper modelMapper = new ModelMapper();
         Logger LOGGER = LoggerFactory.getLogger(OrderService.class);
-        Page<Order> page = orderRepository.findAll(pageRequest);
-        if (page.isEmpty()){
-            LOGGER.info("Empty page returned. Check data and filtering variables.");
-        }
-        List<OrderDto> orderDtos = page.getContent().stream().map(order -> new OrderDto()).toList();
-        Page<OrderDto> pageDTO = new PageImpl<>(orderDtos);
-        return new PagedModel<>(pageDTO);
+        List<Order> list = orderRepository.findAll();
+        List<OrderDto> listDTO = list.stream().map(OrderDto::new).toList();
+        return new PageImpl<>(listDTO);
     }
 
     @Transactional

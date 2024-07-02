@@ -7,6 +7,7 @@ import net.test.springpluskafka.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,8 @@ public class OrderController {
     }
 
     @GetMapping("/paged")
-    public ResponseEntity<PagedModel<OrderDto>> findAllPaged(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
-            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
-            @RequestParam(value = "direction", defaultValue = "ASC") String direction
-    ){
-        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
-        PagedModel<OrderDto> pageRequested = orderService.findAllPaged(pageRequest);
+    public ResponseEntity<Page<OrderDto>> findAllPaged(Pageable page){
+        Page<OrderDto> pageRequested = orderService.findAllPaged((PageRequest) page);
         return ResponseEntity.ok().body(pageRequested);
     }
 
