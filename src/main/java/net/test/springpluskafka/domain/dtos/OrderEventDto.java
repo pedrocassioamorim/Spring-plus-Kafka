@@ -15,4 +15,12 @@ public class OrderEventDto implements Serializable {
     String status;
     OrderDto order;
 
+    public OrderEventDto (OrderEvent orderEvent){
+        this.id = orderEvent.getId();
+        this.message = orderEvent.getMessage();
+        this.status = orderEvent.getStatus();
+        this.order = new OrderDto(orderEvent.getOrder());
+    }
+
+    public OrderEventDto() {}
 }

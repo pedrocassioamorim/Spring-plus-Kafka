@@ -15,5 +15,12 @@ public class OrderDto implements Serializable {
     Integer quantity;
     Double price;
 
+    public OrderDto (Order order){
+        this.id = order.getId();
+        this.name = order.getName();
+        this.price = order.getPrice();
+        this.quantity = order.getQuantity();
+    }
 
+    public OrderDto() {}
 }
