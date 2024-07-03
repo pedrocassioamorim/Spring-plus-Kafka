@@ -56,7 +56,7 @@ public class OrderService {
                 throw new ResourceNotFoundException("Object not found (ID): " + Id);
             }
             return modelMapper.map(order, OrderDto.class);
-        }catch (EntityNotFoundException f){
+        } catch (EntityNotFoundException f){
             throw new ResourceNotFoundException("Object not found (ID): " + Id);
         }
     }
@@ -70,28 +70,35 @@ public class OrderService {
 
     @Transactional
     public OrderDto update(Long Id, OrderDto orderDto){
-        ModelMapper modelMapper = new ModelMapper();
-        Optional<Order> order = orderRepository.findById(Id);
-        if (order.isEmpty()){
+        try{
+            ModelMapper modelMapper = new ModelMapper();
+            Order order = orderRepository.getReferenceById(Id);
+            if (order.getName().isEmpty()){
+                throw new ResourceNotFoundException("Object not found (ID): " + Id);
+            }
+            order = modelMapper.map(orderDto, Order.class);
+            order.setId(Id);
+            return modelMapper.map(orderRepository.save(order), OrderDto.class);
+        }catch (EntityNotFoundException f){
             throw new ResourceNotFoundException("Object not found (ID): " + Id);
         }
-        Order newOrder = modelMapper.map(orderDto, Order.class);
-        newOrder.setId(Id);
-        return modelMapper.map(orderRepository.save(newOrder), OrderDto.class);
+
+
     }
 
     @Transactional
     public void delete(Long Id){
-        ModelMapper modelMapper = new ModelMapper();
-        Optional<Order> order = orderRepository.findById(Id);
-        if(order.isEmpty()){
-            throw new ResourceNotFoundException("Object not found (ID): " + Id);
-        }
         try{
-            Order orderToDelete = modelMapper.map(order, Order.class);
-            orderRepository.delete(orderToDelete);
+            ModelMapper modelMapper = new ModelMapper();
+            Order order = orderRepository.getReferenceById(Id);
+            if(order.getName().isEmpty()){
+                throw new ResourceNotFoundException("Object not found (ID): " + Id);
+            }
+            orderRepository.delete(order);
         } catch (DataIntegrityViolationException e){
             throw new DatabaseViolationException("Data Integrity Violation! Object not deleted. Stacktrace: " + Arrays.toString(e.getStackTrace()));
+        } catch (EntityNotFoundException f){
+            throw new ResourceNotFoundException("Object not found (ID): " + Id);
         }
     }
 
