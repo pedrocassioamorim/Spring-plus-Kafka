@@ -1,5 +1,6 @@
 package net.test.springpluskafka.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import net.test.springpluskafka.domain.dtos.OrderDto;
 import net.test.springpluskafka.domain.entities.Order;
@@ -47,13 +48,17 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto findById(Long Id){
-        ModelMapper modelMapper = new ModelMapper();
-        Optional<Order> order = orderRepository.findById(Id);
-        if (order.isEmpty()) {
+    public OrderDto findById(Long Id) {
+        try{
+            ModelMapper modelMapper = new ModelMapper();
+            Order order = orderRepository.getReferenceById(Id);
+            if (order.getName().isEmpty()) {
+                throw new ResourceNotFoundException("Object not found (ID): " + Id);
+            }
+            return modelMapper.map(order, OrderDto.class);
+        }catch (EntityNotFoundException f){
             throw new ResourceNotFoundException("Object not found (ID): " + Id);
         }
-        return modelMapper.map(order, OrderDto.class);
     }
 
     @Transactional
